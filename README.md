@@ -4,3 +4,16 @@ This PowerShell script is designed to interact with the VirusTotal API to retrie
 The script serves as a valuable tool for security analysts and researchers to quickly access comprehensive data about a specific file hash, aiding in the identification and assessment of potential threats.
 
 To use the script, users need to provide their own VirusTotal API key for authentication: replace $VTapiKey value with your own API key. The script offers a thorough overview of file hash details in a convenient and readable format.
+
+The following information is collected via the VirusTotal API: 
+
+# - Hash
+# - Last Analysised by VT:
+# - Number of Unique Uploaded Sources:
+# - File Type:
+# - Known Names for Hash:
+# - Security Vendor Identification List:
+# - Contacted IP Addresses:
+# - Contacted Domains:
+# - MITRE Attack Matrix
+# - VT Details URL:
