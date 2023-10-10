@@ -7,13 +7,13 @@ To use the script, users need to provide their own VirusTotal API key for authen
 
 The following information is collected via the VirusTotal API: 
 
-# - Hash
-# - Last Analysised by VT:
-# - Number of Unique Uploaded Sources:
-# - File Type:
-# - Known Names for Hash:
-# - Security Vendor Identification List:
-# - Contacted IP Addresses:
-# - Contacted Domains:
-# - MITRE Attack Matrix
-# - VT Details URL:
+# Hash
+# Last Analysised by VT:
+# Number of Unique Uploaded Sources:
+# File Type:
+# Known Names for Hash:
+# Security Vendor Identification List:
+# Contacted IP Addresses:
+# Contacted Domains:
+# MITRE Attack Matrix
+# VT Details URL:
