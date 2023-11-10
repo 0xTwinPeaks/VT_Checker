@@ -1,9 +1,9 @@
 ﻿# This will prompt the user to enter the hash to search for
-$hash = Read-Host "Enter the hash to search for"
-cls
+$hash = Read-Host "Enter the hash to search for "
+$VTapiKey = Read-Host "Enter the VirusTotal API key here "
+clear-host
 
 # Define the VirusTotal API endpoint
-$VTapiKey = "    PUT VT API KEY HERE!!!!!!!!    "
 $VTapiUrl = "https://www.virustotal.com/api/v3/files/$hash"
 $VTcontactedIPsUrl = "$VTapiUrl/contacted_ips"
 $VTcontactedDomainsUrl = "$VTapiUrl/contacted_domains"
@@ -66,7 +66,7 @@ try {
             foreach ($vendor in $VendorVT) {
                 $vendorName = $vendor.Name
                 $vendorResult = $vendor.Value.result
-                if ($vendorResult -ne $null -and $vendorResult -ne "") {
+                if ($null -ne $vendorResult -and $vendorResult -ne "") {
                     Write-Host "    *  $vendorName : $vendorResult"
                     $anyVendorsIdentified = $true
                 }
