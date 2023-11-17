@@ -35,9 +35,12 @@ result_file = (f"{outputDirectory}/{selectedFile}.txt")
 # Function to clear the screen based on the operating system
 def clear_screen():
     if os.name == 'nt':  # Windows
-        os.system('cls')
-    else:  # Linux and others
-        os.system('clear')
+        try: 
+            os.system('cls')
+        except:  # Linux and others
+            os.system('clear')
+        finally:
+            pass
 
 # Function to hash a file
 def hash_file(selectedFile):
