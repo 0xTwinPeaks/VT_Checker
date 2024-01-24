@@ -5,6 +5,7 @@ import datetime
 import shutil
 import hashlib
 import re
+import colorama
 
 VTapiKey = input("Enter your VirusTotal API key here: ")
 
@@ -20,11 +21,25 @@ os.makedirs(benign_folder, exist_ok=True)
 os.makedirs(malicious_folder, exist_ok=True)
 os.makedirs(Not_Found, exist_ok=True)
 
+# Help menu
+if len(sys.argv) >= 2 and sys.argv[1] == "-h" or sys.argv[1] == "--help" or sys.argv[1] == "-help" or sys.argv[1] == "--h":
+    print("Usage: python VT_Quick_Checker.py <hash_string, file_path, or 'file:<filename>'>" + "\n" + "\n" + "Options:" + "\n" + "  -h, --help            show this help message and exit" + "\n" + "  -c, --color           colorize the output and print to console instead of writing output to a file" + "\n")
+    sys.exit(1)
+
 # Command-line argument check
 if len(sys.argv) == 2:
     selectedFile = sys.argv[1]
+    colorama_init = False
+
+elif len(sys.argv) > 2 and ("-c" in sys.argv[2] or "--color" in sys.argv[2]):
+        selectedFile = sys.argv[1]
+        colorama.init()
+        colorama_init = True
+        
 elif len(sys.argv) == 1:
     selectedFile = input("Enter the hash to perform a VT lookup, a file path to hash a file first then perform the VT lookup, or use this syntax 'file:<filepath>' to perform a VT lookup on hashes in a newline separted text file: ").strip()
+    colorama_init = False
+
 else:
     print("Usage: python VT_Quick_Checker.py <hash_string, file_path, or 'file:<filename>'>")
     sys.exit(1)
@@ -91,11 +106,11 @@ def vt_api_request(selectedFile, VTapiKey):
     contactedIps = requests.get(VTcontactedIPsUrl, headers=headers)
     contactedDomains = requests.get(VTcontactedDomainsUrl, headers=headers)
 
-    return response, mitre_response, contactedIps, contactedDomains
+    return VTapiUrl, mitre_url, VTcontactedIPsUrl, VTcontactedDomainsUrl, response, mitre_response, contactedIps, contactedDomains
 
 # Function to analyze a hash using VirusTotal
 def analyze_hash(selectedFile, VTapiKey):
-    response, mitre_response, contactedIps, contactedDomains = vt_api_request(selectedFile, VTapiKey)
+    VTapiUrl, mitre_url, VTcontactedIPsUrl, VTcontactedDomainsUrl, response, mitre_response, contactedIps, contactedDomains = vt_api_request(selectedFile, VTapiKey)
     output = []
 
     if response.status_code == 200: 
@@ -190,14 +205,27 @@ def analyze_hash(selectedFile, VTapiKey):
         else:
             output.append("No Sandbox data found for this sample.")
 
-        # Write the combined output to the result file
-        with open(result_file, 'w') as result_file_opened:
-            result_file_opened.write('\n'.join(output))
-        move_files_based_on_content(result_file)
+        # Add links to the VirusTotal report
+        output.append(f"\n- Link to VirusTotal report: \n{VTapiUrl}")
+        output.append(f"\n- Link to Mitre ATT&CK Matrix in VT report: \n{mitre_url}")
+        output.append(f"\n- Link to ip addresses observed in VT report: \n{VTcontactedIPsUrl}")
+        output.append(f"\n- Link to domains observed in VT report: \n{VTcontactedDomainsUrl}")
+        
+        # These lines should use the colorama library to create a blue background with yellow text and write the output to the console
+        if colorama_init == True:
+            print(f"{colorama.Fore.YELLOW}" + '\n'.join(output) + f"{colorama.Style.RESET_ALL}")
+            colorama.deinit()
+
+        else:
+            # Write the combined output to the result file
+            with open(result_file, 'w') as result_file_opened:
+                result_file_opened.write('\n'.join(output))
+            move_files_based_on_content(result_file)
 
     else:
         output.append(f"That sample was not discovered in VirusTotal.")
 
+    
         # Write the combined output to the result file
         with open(result_file, 'w') as result_file_opened:
             result_file_opened.write('\n'.join(output))
